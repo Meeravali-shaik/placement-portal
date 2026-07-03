@@ -1,0 +1,4 @@
+/.env
+/seed_dummy_data.py
+/venv
+/__pycache__

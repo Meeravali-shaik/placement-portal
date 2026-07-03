@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}{{ action }} Announcement - Placement Portal{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <a href="{{ url_for('announcements.list_announcements') }}" class="btn btn-link text-muted px-0 text-decoration-none mb-2">
+            <i class="bi bi-arrow-left me-1"></i> Back to Notice Board
+        </a>
+        <h2 class="fw-bold mb-0">{{ action }} Announcement</h2>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm" style="border-radius: 16px;">
+            <div class="card-body p-4 p-md-5">
+                <form action="{{ request.path }}" method="POST">
+                    
+                    <div class="mb-4">
+                        <label class="form-label fw-medium text-muted">Title <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control bg-light border-0 py-2" style="border-radius: 10px;" name="title" value="{{ announcement.title if announcement else '' }}" required placeholder="e.g. Important Update regarding Upcoming Drive">
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label class="form-label fw-medium text-muted">Content <span class="text-danger">*</span></label>
+                        <textarea class="form-control bg-light border-0 py-2" style="border-radius: 10px;" name="content" rows="6" required placeholder="Write your announcement here...">{{ announcement.content if announcement else '' }}</textarea>
+                    </div>
+                    
+                    <div class="mb-5">
+                        <div class="form-check form-switch d-flex align-items-center gap-2">
+                            <input class="form-check-input mt-0" type="checkbox" role="switch" id="pinSwitch" name="is_pinned" style="transform: scale(1.3);" {% if announcement and announcement.is_pinned %}checked{% endif %}>
+                            <label class="form-check-label ms-2 fw-medium text-dark" for="pinSwitch">Pin to top of Notice Board</label>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex gap-3">
+                        <a href="{{ url_for('announcements.list_announcements') }}" class="btn btn-light px-4" style="border-radius: 10px;">Cancel</a>
+                        <button type="submit" class="btn btn-primary px-5" style="border-radius: 10px;">Publish</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4 d-none d-lg-block">
+        <div class="card border-0 shadow-sm bg-primary bg-opacity-10" style="border-radius: 16px;">
+            <div class="card-body p-4">
+                <h6 class="fw-bold text-primary mb-3"><i class="bi bi-info-circle me-2"></i>Tips</h6>
+                <ul class="text-muted fs-7 ps-3 mb-0" style="line-height: 1.8;">
+                    <li>Keep titles concise and action-oriented.</li>
+                    <li>Pinned announcements stay at the top until unpinned.</li>
+                    <li>All students will be able to see this announcement on their dashboard.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

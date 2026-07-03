@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}My Applications - Placement Portal{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold mb-0">My Applications</h2>
+</div>
+
+<div class="row g-4">
+    {% for app in applications %}
+    <div class="col-md-6 col-lg-4">
+        <div class="card border-0 shadow-sm h-100" style="border-radius: 16px; transition: transform 0.2s;">
+            <div class="card-body p-4 position-relative">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div class="d-flex align-items-center">
+                        <div class="bg-light rounded p-2 me-3 d-flex align-items-center justify-content-center border" style="width: 50px; height: 50px;">
+                            {% if app.placement_drives.companies and app.placement_drives.companies.logo_url %}
+                                <img src="{{ app.placement_drives.companies.logo_url }}" alt="Logo" class="img-fluid rounded">
+                            {% else %}
+                                <i class="bi bi-building fs-4 text-primary"></i>
+                            {% endif %}
+                        </div>
+                        <div>
+                            <h5 class="fw-bold mb-1 text-truncate" style="max-width: 150px;">{{ app.placement_drives.drive_name }}</h5>
+                            <p class="text-muted mb-0 fs-7">{{ app.placement_drives.companies.company_name if app.placement_drives.companies else '' }}</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mb-4">
+                    <p class="text-muted fs-7 mb-1">Application Status</p>
+                    <span class="badge 
+                        {% if app.status == 'Applied' %}bg-primary
+                        {% elif app.status == 'Shortlisted' %}bg-info text-dark
+                        {% elif app.status == 'Selected' %}bg-success
+                        {% elif app.status == 'Rejected' %}bg-danger
+                        {% elif app.status == 'Withdrawn' %}bg-secondary
+                        {% else %}bg-warning text-dark{% endif %} 
+                        bg-opacity-10 px-3 py-2 rounded-pill fw-medium border fs-6">
+                        {{ app.status }}
+                    </span>
+                </div>
+                
+                <div class="d-flex align-items-center gap-3 mb-4 border-top pt-3">
+                    <div class="text-muted fs-7">
+                        <i class="bi bi-clock me-1"></i> Applied: {{ app.applied_at[:10] }}
+                    </div>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <a href="{{ url_for('drives.view_drive', drive_id=app.drive_id) }}" class="btn btn-light flex-grow-1 fw-medium" style="border-radius: 10px;">
+                        Drive Details
+                    </a>
+                    
+                    {% if app.status == 'Applied' %}
+                    <form action="{{ url_for('applications.withdraw', drive_id=app.drive_id) }}" method="POST" onsubmit="return confirm('Are you sure you want to withdraw your application?');">
+                        <button type="submit" class="btn btn-outline-danger" style="border-radius: 10px;" title="Withdraw Application">
+                            <i class="bi bi-x-circle"></i>
+                        </button>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="col-12 text-center py-5">
+        <div class="p-5 bg-white rounded-4 shadow-sm">
+            <i class="bi bi-send-x text-muted" style="font-size: 3rem;"></i>
+            <h4 class="mt-3 fw-bold">No Applications Yet</h4>
+            <p class="text-muted mb-4">You haven't applied to any placement drives.</p>
+            <a href="{{ url_for('drives.list_drives') }}" class="btn btn-primary" style="border-radius: 10px;">Browse Drives</a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<style>
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.05) !important;
+    }
+</style>
+{% endblock %}

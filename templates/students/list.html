@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Students - Placement Portal{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold mb-0">Manage Students</h2>
+    <div class="d-flex gap-2">
+        <button class="btn btn-outline-primary" style="border-radius: 10px;" data-bs-toggle="modal" data-bs-target="#filterModal">
+            <i class="bi bi-funnel me-2"></i>Filter
+        </button>
+        {% if session.get('user_role') in ['super_admin', 'placement_officer'] %}
+        <a class="btn btn-primary" href="{{ url_for('students.add_student') }}" style="border-radius: 10px;">
+            <i class="bi bi-person-plus me-2"></i>Add Student
+        </a>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Students Table Card -->
+<div class="card border-0 shadow-sm" style="border-radius: 16px;">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-4 py-3 border-0 rounded-top-start">Student Name</th>
+                        <th class="py-3 border-0">Roll Number</th>
+                        <th class="py-3 border-0">Branch</th>
+                        <th class="py-3 border-0">CGPA</th>
+                        <th class="py-3 border-0">Status</th>
+                        <th class="pe-4 py-3 border-0 text-end rounded-top-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for student in students %}
+                    <tr>
+                        <td class="ps-4">
+                            <div class="d-flex align-items-center">
+                                <div class="user-avatar me-3" style="width: 36px; height: 36px; font-size: 0.9rem;">
+                                    {{ student.full_name[0] | upper if student.full_name else 'S' }}
+                                </div>
+                                <div>
+                                    <div class="fw-bold">{{ student.full_name or 'Not Updated' }}</div>
+                                    <div class="text-muted" style="font-size: 0.8rem;">{{ student.users.email }}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>{{ student.roll_number or 'N/A' }}</td>
+                        <td>{{ student.branch or 'N/A' }}</td>
+                        <td><span class="fw-bold text-primary">{{ student.cgpa or 'N/A' }}</span></td>
+                        <td>
+                            {% if student.placement_status == 'Placed' %}
+                                <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3 py-1">Placed</span>
+                            {% else %}
+                                <span class="badge bg-warning bg-opacity-10 text-warning rounded-pill px-3 py-1">Unplaced</span>
+                            {% endif %}
+                        </td>
+                        <td class="pe-4 text-end">
+                            <a href="{{ url_for('students.view_student', student_id=student.id) }}" class="btn btn-sm btn-light text-primary rounded-pill px-3">
+                                <i class="bi bi-eye me-1"></i> View
+                            </a>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center py-5 text-muted">
+                            <i class="bi bi-inbox fs-1 d-block mb-3"></i>
+                            No students found.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Pagination -->
+        <div class="d-flex justify-content-between align-items-center p-4 border-top">
+            <span class="text-muted" style="font-size: 0.9rem;">Showing {{ students|length }} entries</span>
+            <nav>
+                <ul class="pagination pagination-sm mb-0">
+                    <li class="page-item disabled"><a class="page-link rounded-start" href="#">Previous</a></li>
+                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link rounded-end" href="#">Next</a></li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+<!-- Filter Modal -->
+<div class="modal fade" id="filterModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius: 16px; border: none;">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold">Filter Students</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="{{ url_for('students.list_students') }}" method="GET">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label text-muted">Branch</label>
+                        <select class="form-select" name="branch" style="border-radius: 10px;">
+                            <option value="">All Branches</option>
+                            <option value="Computer Science">Computer Science</option>
+                            <option value="Information Technology">Information Technology</option>
+                            <option value="Electronics">Electronics</option>
+                            <option value="Mechanical">Mechanical</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-muted">Minimum CGPA</label>
+                        <input type="number" step="0.1" class="form-control" name="min_cgpa" style="border-radius: 10px;" placeholder="e.g. 7.5">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-muted">Placement Status</label>
+                        <select class="form-select" name="placement_status" style="border-radius: 10px;">
+                            <option value="">Any</option>
+                            <option value="Unplaced">Unplaced</option>
+                            <option value="Placed">Placed</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 pt-0">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal" style="border-radius: 10px;">Clear</button>
+                    <button type="submit" class="btn btn-primary" style="border-radius: 10px;">Apply Filters</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

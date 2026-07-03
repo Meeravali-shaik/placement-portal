@@ -1,0 +1,5 @@
+Flask
+supabase
+argon2-cffi
+python-dotenv
+gunicorn

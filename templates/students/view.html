@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+
+{% block title %}Student Details - Placement Portal{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <a href="{{ url_for('students.list_students') }}" class="btn btn-link text-muted px-0 text-decoration-none mb-2">
+            <i class="bi bi-arrow-left me-1"></i> Back to Students
+        </a>
+        <h2 class="fw-bold mb-0">Student Profile</h2>
+    </div>
+    <div>
+        <button class="btn btn-outline-primary" style="border-radius: 10px;">
+            <i class="bi bi-download me-2"></i>Download Resume
+        </button>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Left Column: Summary -->
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm" style="border-radius: 16px;">
+            <div class="card-body p-4 text-center">
+                <div class="user-avatar mx-auto mb-3" style="width: 80px; height: 80px; font-size: 2rem; background: linear-gradient(135deg, var(--primary), var(--primary-dark));">
+                    {{ student.full_name[0] | upper if student.full_name else 'S' }}
+                </div>
+                <h5 class="fw-bold mb-1">{{ student.full_name or 'N/A' }}</h5>
+                <p class="text-muted mb-3">{{ student.roll_number or 'N/A' }}</p>
+                
+                <div class="d-flex justify-content-center gap-2 mb-4">
+                    {% if student.placement_status == 'Placed' %}
+                        <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3 py-2 fs-6">Placed</span>
+                    {% else %}
+                        <span class="badge bg-warning bg-opacity-10 text-warning rounded-pill px-3 py-2 fs-6">Unplaced</span>
+                    {% endif %}
+                </div>
+
+                <ul class="list-group list-group-flush text-start">
+                    <li class="list-group-item px-0 py-3 d-flex justify-content-between align-items-center bg-transparent">
+                        <span class="text-muted"><i class="bi bi-envelope me-2"></i>Email</span>
+                        <span class="fw-medium">{{ student.users.email }}</span>
+                    </li>
+                    <li class="list-group-item px-0 py-3 d-flex justify-content-between align-items-center bg-transparent">
+                        <span class="text-muted"><i class="bi bi-telephone me-2"></i>Phone</span>
+                        <span class="fw-medium">{{ student.phone_number or 'N/A' }}</span>
+                    </li>
+                    <li class="list-group-item px-0 py-3 d-flex justify-content-between align-items-center bg-transparent border-bottom-0">
+                        <span class="text-muted"><i class="bi bi-calendar3 me-2"></i>DOB</span>
+                        <span class="fw-medium">{{ student.date_of_birth or 'N/A' }}</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="card border-0 shadow-sm mt-4" style="border-radius: 16px;">
+            <div class="card-body p-4">
+                <h6 class="fw-bold mb-3">Links</h6>
+                {% if student.linkedin_url %}
+                    <a href="{{ student.linkedin_url }}" target="_blank" class="d-block mb-2 text-decoration-none"><i class="bi bi-linkedin me-2 text-primary"></i> LinkedIn Profile</a>
+                {% endif %}
+                {% if student.github_url %}
+                    <a href="{{ student.github_url }}" target="_blank" class="d-block mb-2 text-decoration-none text-dark"><i class="bi bi-github me-2"></i> GitHub Profile</a>
+                {% endif %}
+                {% if not student.linkedin_url and not student.github_url %}
+                    <p class="text-muted mb-0">No links provided.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Column: Details -->
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm mb-4" style="border-radius: 16px;">
+            <div class="card-body p-4 p-md-5">
+                <h5 class="fw-bold mb-4 border-bottom pb-3">Academic Information</h5>
+                
+                <div class="row g-4 mb-4">
+                    <div class="col-md-4">
+                        <p class="text-muted mb-1 fs-7">Branch</p>
+                        <h6 class="fw-bold">{{ student.branch or 'N/A' }}</h6>
+                    </div>
+                    <div class="col-md-4">
+                        <p class="text-muted mb-1 fs-7">Department</p>
+                        <h6 class="fw-bold">{{ student.department or 'N/A' }}</h6>
+                    </div>
+                    <div class="col-md-4">
+                        <p class="text-muted mb-1 fs-7">Graduation Year</p>
+                        <h6 class="fw-bold">{{ student.graduation_year or 'N/A' }}</h6>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <div class="p-3 bg-light rounded-3 border">
+                            <p class="text-muted mb-1 fs-7">CGPA</p>
+                            <h4 class="fw-bold text-primary mb-0">{{ student.cgpa or 'N/A' }}</h4>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-3 bg-light rounded-3 border">
+                            <p class="text-muted mb-1 fs-7">Active Backlogs</p>
+                            <h4 class="fw-bold text-danger mb-0">{{ student.active_backlogs or '0' }}</h4>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-3 bg-light rounded-3 border">
+                            <p class="text-muted mb-1 fs-7">12th Percentage</p>
+                            <h4 class="fw-bold text-info mb-0">{{ student.twelfth_percentage or 'N/A' }}%</h4>
+                        </div>
+                    </div>
+                </div>
+
+                <h5 class="fw-bold mb-4 border-bottom pb-3 mt-5">Skills & Qualifications</h5>
+                <div class="mb-4">
+                    <p class="text-muted mb-2">Technical Skills</p>
+                    <div>
+                        {% if student.skills %}
+                            {% for skill in student.skills.split(',') %}
+                                <span class="badge bg-light text-dark border px-3 py-2 me-2 mb-2 rounded-pill fw-normal">{{ skill.strip() }}</span>
+                            {% endfor %}
+                        {% else %}
+                            <p class="text-muted">No skills listed.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

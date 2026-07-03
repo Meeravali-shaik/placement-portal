@@ -1,0 +1,173 @@
+{% extends "base.html" %}
+
+{% block title %}Analytics - Placement Portal{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold mb-0">Placement Analytics</h2>
+    <div>
+        <button class="btn btn-outline-primary me-2" style="border-radius: 10px;" onclick="window.print()">
+            <i class="bi bi-printer me-2"></i>Print Report
+        </button>
+        <button class="btn btn-primary" style="border-radius: 10px;">
+            <i class="bi bi-download me-2"></i>Export CSV
+        </button>
+    </div>
+ </div>
+
+<div class="row g-4 mb-5">
+    <div class="col-md-6 col-lg-3">
+        <div class="stat-card">
+            <div class="stat-icon icon-blue"><i class="bi bi-people-fill"></i></div>
+            <div class="stat-value">{{ stats.total_students }}</div>
+            <div class="stat-label">Total Students</div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-lg-3">
+        <div class="stat-card">
+            <div class="stat-icon icon-purple"><i class="bi bi-building-fill"></i></div>
+            <div class="stat-value">{{ stats.total_companies }}</div>
+            <div class="stat-label">Companies Onboarded</div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-lg-3">
+        <div class="stat-card">
+            <div class="stat-icon icon-green"><i class="bi bi-briefcase-fill"></i></div>
+            <div class="stat-value">{{ stats.total_offers }}</div>
+            <div class="stat-label">Total Offers</div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-lg-3">
+        <div class="stat-card">
+            <div class="stat-icon icon-orange"><i class="bi bi-graph-up-arrow"></i></div>
+            <div class="stat-value">{{ stats.placement_percentage }}%</div>
+            <div class="stat-label">Placement Rate</div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm h-100" style="border-radius: 16px;">
+            <div class="card-body p-4">
+                <h5 class="fw-bold mb-4">Student Registrations</h5>
+                <div class="chart-panel">
+                    <canvas id="placementTrendChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm h-100" style="border-radius: 16px;">
+            <div class="card-body p-4">
+                <h5 class="fw-bold mb-4">Branch-wise Placements</h5>
+                <div class="chart-panel chart-panel-sm">
+                    <canvas id="branchChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-6">
+        <div class="card border-0 shadow-sm h-100" style="border-radius: 16px;">
+            <div class="card-body p-4 d-flex flex-column justify-content-center text-center">
+                <div class="bg-primary bg-opacity-10 text-primary rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                    <i class="bi bi-trophy fs-1"></i>
+                </div>
+                <h6 class="text-muted text-uppercase fw-bold letter-spacing-1">Highest Package</h6>
+                <h1 class="fw-bolder display-5 text-dark">{{ stats.highest_package }}</h1>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card border-0 shadow-sm h-100" style="border-radius: 16px;">
+            <div class="card-body p-4 d-flex flex-column justify-content-center text-center">
+                <div class="bg-success bg-opacity-10 text-success rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                    <i class="bi bi-cash-stack fs-1"></i>
+                </div>
+                <h6 class="text-muted text-uppercase fw-bold letter-spacing-1">Average Package</h6>
+                <h1 class="fw-bolder display-5 text-dark">{{ stats.average_package }}</h1>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const registrationLabels = {{ charts.registration_labels | tojson }};
+        const registrationValues = {{ charts.registration_values | tojson }};
+        const branchLabels = {{ charts.branch_labels | tojson }};
+        const placedValues = {{ charts.branch_placed_values | tojson }};
+        const unplacedValues = {{ charts.branch_unplaced_values | tojson }};
+
+        const ctxTrend = document.getElementById('placementTrendChart').getContext('2d');
+        new Chart(ctxTrend, {
+            type: 'line',
+            data: {
+                labels: registrationLabels,
+                datasets: [{
+                    label: 'New Students',
+                    data: registrationValues,
+                    borderColor: '#10b981',
+                    backgroundColor: 'rgba(16, 185, 129, 0.2)',
+                    borderWidth: 3,
+                    tension: 0.4,
+                    fill: true,
+                    pointBackgroundColor: '#fff',
+                    pointBorderColor: '#10b981',
+                    pointBorderWidth: 2,
+                    pointRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { beginAtZero: true, grid: { borderDash: [5, 5] } },
+                    x: { grid: { display: false } }
+                }
+            }
+        });
+
+        const ctxBranch = document.getElementById('branchChart').getContext('2d');
+        new Chart(ctxBranch, {
+            type: 'bar',
+            data: {
+                labels: branchLabels,
+                datasets: [{
+                    label: 'Placed',
+                    data: placedValues,
+                    backgroundColor: '#10b981',
+                    borderRadius: 8
+                }, {
+                    label: 'Unplaced',
+                    data: unplacedValues,
+                    backgroundColor: '#d1fae5',
+                    borderRadius: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom' }
+                },
+                scales: {
+                    x: { stacked: true, grid: { display: false } },
+                    y: { stacked: true, beginAtZero: true }
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}

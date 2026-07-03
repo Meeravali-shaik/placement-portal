@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Placement Portal{% endblock %}</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <style>
+        :root {
+            --primary: #10b981;
+            --primary-dark: #059669;
+            --bg-body: #f8f9fa;
+            --sidebar-bg: #ffffff;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+            --sidebar-width: 260px;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            overflow-x: hidden;
+        }
+
+        /* Sidebar Styling */
+        .sidebar {
+            width: var(--sidebar-width);
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: var(--sidebar-bg);
+            border-right: 1px solid rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            box-shadow: 4px 0 10px rgba(0,0,0,0.02);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-header {
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .brand-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-right: 10px;
+        }
+
+        .brand-text {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--text-main);
+            letter-spacing: -0.5px;
+        }
+
+        .sidebar-nav {
+            padding: 1rem 0;
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+
+        .nav-item {
+            margin: 0.2rem 1rem;
+        }
+
+        .nav-link {
+            color: var(--text-muted);
+            padding: 0.75rem 1rem;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .nav-link i {
+            margin-right: 12px;
+            font-size: 1.1rem;
+            transition: transform 0.2s;
+        }
+
+        .nav-link:hover {
+            color: var(--primary);
+            background-color: rgba(16, 185, 129, 0.08);
+        }
+
+        .nav-link:hover i {
+            transform: translateX(3px);
+        }
+
+        .nav-link.active {
+            color: var(--primary);
+            background-color: rgba(16, 185, 129, 0.1);
+            font-weight: 600;
+        }
+
+        .sidebar-footer {
+            padding: 1rem;
+            border-top: 1px solid rgba(0,0,0,0.05);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s ease;
+        }
+
+        /* Top Navbar */
+        .top-navbar {
+            height: 70px;
+            background-color: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 999;
+        }
+
+        .navbar-search .form-control {
+            border-radius: 20px;
+            padding-left: 2.5rem;
+            background-color: var(--bg-body);
+            border: 1px solid transparent;
+        }
+        .navbar-search .form-control:focus {
+            background-color: #fff;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 0.2rem rgba(16, 185, 129, 0.25);
+        }
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+
+        /* Page Content */
+        .page-content {
+            padding: 2rem;
+            flex-grow: 1;
+        }
+
+        /* Card Styling for Dashboards */
+        .stat-card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 1.5rem;
+            border: 1px solid rgba(0,0,0,0.03);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+            height: 100%;
+        }
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .icon-green { background: rgba(16, 185, 129, 0.1); color: var(--primary); }
+        .icon-blue { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
+        .icon-purple { background: rgba(139, 92, 246, 0.1); color: #8b5cf6; }
+        .icon-orange { background: rgba(249, 115, 22, 0.1); color: #f97316; }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 0.2rem;
+            color: var(--text-main);
+        }
+        .stat-label {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .chart-panel {
+            position: relative;
+            width: 100%;
+            height: 320px;
+        }
+
+        .chart-panel-sm {
+            height: 240px;
+        }
+
+        .chart-panel canvas {
+            width: 100% !important;
+            height: 100% !important;
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .main-content {
+                margin-left: 0;
+            }
+            /* Add toggle logic for mobile later */
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="brand-icon">P</div>
+            <div class="brand-text">PlacementPortal</div>
+        </div>
+
+        <div class="sidebar-nav">
+            <ul class="nav flex-column">
+                <!-- Dynamic Navigation Based on Role -->
+                {% if session.get('user_role') == 'super_admin' %}
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'dashboard.super_admin' %}active{% endif %}" href="{{ url_for('dashboard.super_admin') }}">
+                            <i class="bi bi-grid-1x2"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.blueprint == 'students' %}active{% endif %}" href="{{ url_for('students.list_students') }}">
+                            <i class="bi bi-people"></i> Manage Students
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.blueprint == 'companies' %}active{% endif %}" href="{{ url_for('companies.list_companies') }}">
+                            <i class="bi bi-building"></i> Companies
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.blueprint == 'drives' %}active{% endif %}" href="{{ url_for('drives.list_drives') }}">
+                            <i class="bi bi-calendar-event"></i> Placement Drives
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.blueprint == 'reports' %}active{% endif %}" href="{{ url_for('reports.analytics_dashboard') }}">
+                            <i class="bi bi-graph-up"></i> Analytics
+                        </a>
+                    </li>
+                {% elif session.get('user_role') == 'placement_officer' %}
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'dashboard.placement_officer' %}active{% endif %}" href="{{ url_for('dashboard.placement_officer') }}">
+                            <i class="bi bi-grid-1x2"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.blueprint == 'companies' %}active{% endif %}" href="{{ url_for('companies.list_companies') }}">
+                            <i class="bi bi-building"></i> Companies
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.blueprint == 'drives' %}active{% endif %}" href="{{ url_for('drives.list_drives') }}">
+                            <i class="bi bi-calendar-event"></i> Placement Drives
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.blueprint == 'students' %}active{% endif %}" href="{{ url_for('students.list_students') }}">
+                            <i class="bi bi-mortarboard"></i> Students
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.blueprint == 'reports' %}active{% endif %}" href="{{ url_for('reports.analytics_dashboard') }}">
+                            <i class="bi bi-graph-up"></i> Analytics
+                        </a>
+                    </li>
+                {% elif session.get('user_role') == 'training_coordinator' %}
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'dashboard.training_coordinator' %}active{% endif %}" href="{{ url_for('dashboard.training_coordinator') }}">
+                            <i class="bi bi-grid-1x2"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.blueprint == 'students' %}active{% endif %}" href="{{ url_for('students.list_students') }}">
+                            <i class="bi bi-mortarboard"></i> Students
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.blueprint == 'reports' %}active{% endif %}" href="{{ url_for('reports.analytics_dashboard') }}">
+                            <i class="bi bi-graph-up"></i> Analytics
+                        </a>
+                    </li>
+                {% elif session.get('user_role') == 'student' %}
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'dashboard.student' %}active{% endif %}" href="{{ url_for('dashboard.student') }}">
+                            <i class="bi bi-grid-1x2"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'students.my_profile' %}active{% endif %}" href="{{ url_for('students.my_profile') }}">
+                            <i class="bi bi-person-lines-fill"></i> My Profile
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.blueprint == 'drives' %}active{% endif %}" href="{{ url_for('drives.list_drives') }}">
+                            <i class="bi bi-briefcase"></i> Drives & Jobs
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.blueprint == 'applications' %}active{% endif %}" href="{{ url_for('applications.my_applications') }}">
+                            <i class="bi bi-send-check"></i> My Applications
+                        </a>
+                    </li>
+                {% endif %}
+                <li class="nav-item mt-3 border-top pt-2">
+                    <a class="nav-link {% if request.blueprint == 'announcements' %}active{% endif %}" href="{{ url_for('announcements.list_announcements') }}">
+                        <i class="bi bi-megaphone"></i> Announcements
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="sidebar-footer">
+            <a href="{{ url_for('auth.logout') }}" class="btn btn-light w-100 text-start text-danger" style="border-radius: 10px; font-weight: 500;">
+                <i class="bi bi-box-arrow-right me-2"></i> Logout
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        
+        <!-- Top Navbar -->
+        <header class="top-navbar">
+            <div class="d-flex align-items-center position-relative navbar-search w-50">
+                <i class="bi bi-search search-icon"></i>
+                <input type="text" class="form-control" placeholder="Search students, companies, drives...">
+            </div>
+
+            <div class="user-profile">
+                <button class="btn btn-link text-dark p-0 me-3 position-relative">
+                    <i class="bi bi-bell fs-5"></i>
+                    <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle">
+                        <span class="visually-hidden">New alerts</span>
+                    </span>
+                </button>
+                <div class="d-flex align-items-center">
+                    <div class="text-end me-3 d-none d-md-block">
+                        <div class="fw-bold" style="font-size: 0.9rem;">{{ session.get('user_name', 'User') }}</div>
+                        <div class="text-muted" style="font-size: 0.75rem; text-transform: capitalize;">{{ session.get('user_role', 'Role').replace('_', ' ') }}</div>
+                    </div>
+                    <div class="user-avatar">
+                        {{ session.get('user_name', 'U')[0] | upper }}
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Page Content -->
+        <div class="page-content">
+            
+            <!-- Flash Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} alert-dismissible fade show shadow-sm" role="alert" style="border-radius: 12px;">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

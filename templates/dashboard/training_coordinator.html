@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}Training Coordinator Dashboard - Placement Portal{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold mb-0">Training Coordinator Dashboard</h2>
+    <div>
+        <button class="btn btn-outline-primary" style="border-radius: 10px;">
+            <i class="bi bi-file-earmark-text me-2"></i>Generate Report
+        </button>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-md-4">
+        <div class="stat-card">
+            <div class="stat-icon icon-green">
+                <i class="bi bi-person-check-fill"></i>
+            </div>
+            <div class="stat-value">{{ stats.students_ready }}</div>
+            <div class="stat-label">Students Ready (Eligible)</div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="stat-card">
+            <div class="stat-icon icon-orange">
+                <i class="bi bi-person-exclamation"></i>
+            </div>
+            <div class="stat-value">{{ stats.students_not_eligible }}</div>
+            <div class="stat-label">Students Needing Support</div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="stat-card">
+            <div class="stat-icon icon-purple">
+                <i class="bi bi-graph-up-arrow"></i>
+            </div>
+            <div class="stat-value">{{ stats.training_progress }}%</div>
+            <div class="stat-label">Overall Training Progress</div>
+            <div class="progress mt-3" style="height: 6px; border-radius: 3px;">
+                <div class="progress-bar bg-purple js-progress-bar" role="progressbar" data-progress="{{ stats.training_progress | default(0) | int }}" aria-valuenow="{{ stats.training_progress | default(0) | int }}" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm" style="border-radius: 16px;">
+    <div class="card-body p-4">
+        <h5 class="fw-bold mb-4">Skill Assessment Tracking</h5>
+        <div class="text-center text-muted py-5">
+            <i class="bi bi-cone-striped fs-1 mb-3"></i>
+            <p>Skill assessment module will be integrated here.</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.querySelectorAll('.js-progress-bar').forEach((bar) => {
+        const progress = Number(bar.dataset.progress || 0);
+        bar.style.width = `${progress}%`;
+        bar.style.backgroundColor = '#8b5cf6';
+    });
+</script>
+{% endblock %}

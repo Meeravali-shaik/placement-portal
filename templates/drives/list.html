@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block title %}Placement Drives - Placement Portal{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold mb-0">Placement Drives</h2>
+    {% if session.get('user_role') in ['super_admin', 'placement_officer'] %}
+    <div>
+        <a href="{{ url_for('drives.add_drive') }}" class="btn btn-primary" style="border-radius: 10px;">
+            <i class="bi bi-plus-lg me-2"></i>Create Drive
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Filters -->
+<div class="mb-4">
+    <form action="{{ url_for('drives.list_drives') }}" method="GET" class="d-flex gap-2">
+        <select class="form-select bg-white border-0 shadow-sm" name="status" onchange="this.form.submit()" style="width: 200px; border-radius: 10px;">
+            <option value="">All Statuses</option>
+            <option value="Upcoming" {% if request.args.get('status') == 'Upcoming' %}selected{% endif %}>Upcoming</option>
+            <option value="Registration Open" {% if request.args.get('status') == 'Registration Open' %}selected{% endif %}>Registration Open</option>
+            <option value="Ongoing" {% if request.args.get('status') == 'Ongoing' %}selected{% endif %}>Ongoing</option>
+            <option value="Completed" {% if request.args.get('status') == 'Completed' %}selected{% endif %}>Completed</option>
+        </select>
+        {% if request.args.get('status') %}
+            <a href="{{ url_for('drives.list_drives') }}" class="btn btn-light" style="border-radius: 10px;">Clear Filter</a>
+        {% endif %}
+    </form>
+</div>
+
+<div class="row g-4">
+    {% for drive in drives %}
+    <div class="col-md-6 col-lg-4">
+        <div class="card border-0 shadow-sm h-100" style="border-radius: 16px; transition: transform 0.2s, box-shadow 0.2s;">
+            <div class="card-body p-4 position-relative">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div>
+                        <span class="badge 
+                            {% if drive.drive_status == 'Upcoming' %}bg-info text-dark
+                            {% elif drive.drive_status == 'Registration Open' %}bg-success
+                            {% elif drive.drive_status == 'Ongoing' %}bg-primary
+                            {% elif drive.drive_status == 'Completed' %}bg-secondary
+                            {% else %}bg-warning text-dark{% endif %} 
+                            bg-opacity-10 mb-2 px-3 py-2 rounded-pill fw-medium border">
+                            {{ drive.drive_status }}
+                        </span>
+                        <h5 class="fw-bold mb-1 text-truncate" title="{{ drive.drive_name }}">{{ drive.drive_name }}</h5>
+                        <p class="text-muted mb-0 fs-7">
+                            <i class="bi bi-building me-1"></i> {{ drive.companies.company_name if drive.companies else 'Unknown Company' }}
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="d-flex flex-column gap-2 mb-4 mt-3">
+                    <div class="d-flex align-items-center text-muted fs-7">
+                        <i class="bi bi-calendar-event me-2 text-primary"></i> 
+                        <span class="fw-medium text-dark me-1">Drive Date:</span> 
+                        {{ drive.drive_date or 'TBA' }}
+                    </div>
+                    <div class="d-flex align-items-center text-muted fs-7">
+                        <i class="bi bi-geo-alt me-2 text-danger"></i> 
+                        <span class="fw-medium text-dark me-1">Venue:</span> 
+                        {{ drive.venue or 'TBA' }}
+                    </div>
+                    <div class="d-flex align-items-center text-muted fs-7">
+                        <i class="bi bi-mortarboard me-2 text-success"></i> 
+                        <span class="fw-medium text-dark me-1">Eligibility:</span> 
+                        {{ drive.min_cgpa or 'N/A' }} CGPA
+                    </div>
+                </div>
+
+                <a href="{{ url_for('drives.view_drive', drive_id=drive.id) }}" class="btn btn-light w-100 fw-medium" style="border-radius: 10px;">
+                    View Drive Details
+                </a>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="col-12 text-center py-5">
+        <div class="p-5 bg-white rounded-4 shadow-sm">
+            <i class="bi bi-calendar-x text-muted" style="font-size: 3rem;"></i>
+            <h4 class="mt-3 fw-bold">No Drives Found</h4>
+            <p class="text-muted mb-4">No placement drives match the current filter.</p>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<style>
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.05) !important;
+    }
+</style>
+{% endblock %}

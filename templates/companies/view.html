@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+
+{% block title %}{{ company.company_name }} - Placement Portal{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <a href="{{ url_for('companies.list_companies') }}" class="btn btn-link text-muted px-0 text-decoration-none mb-2">
+        <i class="bi bi-arrow-left me-1"></i> Back to Companies
+    </a>
+</div>
+
+<!-- Header Section -->
+<div class="card border-0 shadow-sm mb-4 overflow-hidden" style="border-radius: 16px;">
+    <div class="bg-primary bg-opacity-10" style="height: 120px;"></div>
+    <div class="card-body px-4 px-md-5 pb-5 position-relative">
+        <div class="d-flex flex-column flex-md-row align-items-md-end justify-content-between" style="margin-top: -60px;">
+            <div class="d-flex align-items-end mb-4 mb-md-0">
+                <div class="bg-white p-2 rounded-3 shadow-sm me-4 border d-flex align-items-center justify-content-center" style="width: 120px; height: 120px;">
+                    {% if company.logo_url %}
+                        <img src="{{ company.logo_url }}" alt="Logo" class="img-fluid rounded">
+                    {% else %}
+                        <i class="bi bi-building text-primary" style="font-size: 3.5rem;"></i>
+                    {% endif %}
+                </div>
+                <div class="pb-2">
+                    <h2 class="fw-bold mb-1">{{ company.company_name }}</h2>
+                    <p class="text-muted mb-0 fs-5">{{ company.industry or 'Industry not specified' }}</p>
+                </div>
+            </div>
+            
+            <div class="d-flex gap-2 pb-2">
+                {% if company.website %}
+                <a href="{{ company.website }}" target="_blank" class="btn btn-outline-primary px-4" style="border-radius: 10px;">
+                    <i class="bi bi-globe me-2"></i>Visit Website
+                </a>
+                {% endif %}
+                
+                {% if session.get('user_role') in ['super_admin', 'placement_officer'] %}
+                <a href="{{ url_for('companies.edit_company', company_id=company.id) }}" class="btn btn-primary px-4" style="border-radius: 10px;">
+                    <i class="bi bi-pencil me-2"></i>Edit
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Left Column: Details -->
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm mb-4" style="border-radius: 16px;">
+            <div class="card-body p-4 p-md-5">
+                <h5 class="fw-bold mb-4 pb-3 border-bottom">About the Role</h5>
+                
+                <div class="row g-4 mb-5">
+                    <div class="col-sm-6">
+                        <div class="d-flex align-items-start">
+                            <div class="bg-primary bg-opacity-10 p-3 rounded-3 me-3 text-primary">
+                                <i class="bi bi-person-workspace fs-4"></i>
+                            </div>
+                            <div>
+                                <p class="text-muted mb-1 fs-7">Role</p>
+                                <h6 class="fw-bold mb-0">{{ company.job_role or 'Not specified' }}</h6>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="d-flex align-items-start">
+                            <div class="bg-success bg-opacity-10 p-3 rounded-3 me-3 text-success">
+                                <i class="bi bi-cash-stack fs-4"></i>
+                            </div>
+                            <div>
+                                <p class="text-muted mb-1 fs-7">Package / CTC</p>
+                                <h6 class="fw-bold mb-0">{{ company.package or 'N/A' }} {% if company.ctc %}({{ company.ctc }} LPA){% endif %}</h6>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="d-flex align-items-start">
+                            <div class="bg-info bg-opacity-10 p-3 rounded-3 me-3 text-info">
+                                <i class="bi bi-geo-alt fs-4"></i>
+                            </div>
+                            <div>
+                                <p class="text-muted mb-1 fs-7">Location</p>
+                                <h6 class="fw-bold mb-0">{{ company.location or 'Not specified' }}</h6>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="d-flex align-items-start">
+                            <div class="bg-warning bg-opacity-10 p-3 rounded-3 me-3 text-warning">
+                                <i class="bi bi-file-earmark-text fs-4"></i>
+                            </div>
+                            <div>
+                                <p class="text-muted mb-1 fs-7">Bond Details</p>
+                                <h6 class="fw-bold mb-0">{{ company.bond_details or 'None' }}</h6>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <h5 class="fw-bold mb-3">Job Description</h5>
+                <p class="text-muted" style="white-space: pre-wrap; line-height: 1.6;">{{ company.job_description or 'No description available.' }}</p>
+
+                <h5 class="fw-bold mb-3 mt-5">Required Skills</h5>
+                <div>
+                    {% if company.required_skills %}
+                        {% for skill in company.required_skills.split(',') %}
+                            <span class="badge bg-light text-dark border px-3 py-2 me-2 mb-2 rounded-pill fw-normal fs-7">{{ skill.strip() }}</span>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-muted">No specific skills listed.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Column: HR Info & Actions -->
+    <div class="col-lg-4">
+        {% if session.get('user_role') in ['super_admin', 'placement_officer'] %}
+        <div class="card border-0 shadow-sm mb-4" style="border-radius: 16px;">
+            <div class="card-body p-4">
+                <h6 class="fw-bold mb-4"><i class="bi bi-person-lines-fill me-2 text-primary"></i>HR Contact Info</h6>
+                
+                <div class="mb-3">
+                    <p class="text-muted mb-1 fs-7">Contact Person</p>
+                    <p class="fw-medium mb-0">{{ company.contact_person or 'N/A' }}</p>
+                </div>
+                <div class="mb-3">
+                    <p class="text-muted mb-1 fs-7">Email</p>
+                    <p class="fw-medium mb-0">
+                        {% if company.hr_email %}
+                            <a href="mailto:{{ company.hr_email }}" class="text-decoration-none">{{ company.hr_email }}</a>
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </p>
+                </div>
+                <div>
+                    <p class="text-muted mb-1 fs-7">Phone</p>
+                    <p class="fw-medium mb-0">
+                        {% if company.hr_phone %}
+                            <a href="tel:{{ company.hr_phone }}" class="text-decoration-none text-dark">{{ company.hr_phone }}</a>
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="card border-0 shadow-sm" style="border-radius: 16px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white;">
+            <div class="card-body p-4 text-center">
+                <i class="bi bi-calendar-event fs-1 mb-3 opacity-75"></i>
+                <h5 class="fw-bold">Placement Drives</h5>
+                <p class="opacity-75 mb-4 fs-7">Create a placement drive to start hiring for this company.</p>
+                {% if session.get('user_role') in ['super_admin', 'placement_officer'] %}
+                    <button class="btn btn-light w-100 fw-bold text-primary" style="border-radius: 10px;">
+                        Schedule Drive
+                    </button>
+                {% else %}
+                    <button class="btn btn-light w-100 fw-bold text-primary" style="border-radius: 10px;">
+                        View Drives
+                    </button>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

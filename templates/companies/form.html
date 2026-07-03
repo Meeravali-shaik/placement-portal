@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block title %}{{ action }} Company - Placement Portal{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <a href="{{ url_for('companies.list_companies') }}" class="btn btn-link text-muted px-0 text-decoration-none mb-2">
+            <i class="bi bi-arrow-left me-1"></i> Back to Companies
+        </a>
+        <h2 class="fw-bold mb-0">{{ action }} Company</h2>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm" style="border-radius: 16px;">
+    <div class="card-body p-4 p-md-5">
+        <form action="{{ request.path }}" method="POST">
+            <h5 class="fw-bold mb-4 border-bottom pb-3">Basic Information</h5>
+            <div class="row g-4 mb-5">
+                <div class="col-md-6">
+                    <label class="form-label fw-medium text-muted">Company Name <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control bg-light border-0 py-2" style="border-radius: 10px;" name="company_name" value="{{ company.company_name if company else '' }}" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-medium text-muted">Website</label>
+                    <input type="url" class="form-control bg-light border-0 py-2" style="border-radius: 10px;" name="website" value="{{ company.website if company else '' }}" placeholder="https://example.com">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-medium text-muted">Industry</label>
+                    <select class="form-select bg-light border-0 py-2" style="border-radius: 10px;" name="industry">
+                        <option value="">Select Industry</option>
+                        <option value="Information Technology" {% if company and company.industry == 'Information Technology' %}selected{% endif %}>Information Technology</option>
+                        <option value="Finance" {% if company and company.industry == 'Finance' %}selected{% endif %}>Finance</option>
+                        <option value="Consulting" {% if company and company.industry == 'Consulting' %}selected{% endif %}>Consulting</option>
+                        <option value="Manufacturing" {% if company and company.industry == 'Manufacturing' %}selected{% endif %}>Manufacturing</option>
+                        <option value="Other" {% if company and company.industry == 'Other' %}selected{% endif %}>Other</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-medium text-muted">Location(s)</label>
+                    <input type="text" class="form-control bg-light border-0 py-2" style="border-radius: 10px;" name="location" value="{{ company.location if company else '' }}" placeholder="e.g. Bangalore, Hyderabad">
+                </div>
+            </div>
+
+            <h5 class="fw-bold mb-4 border-bottom pb-3">Job Details</h5>
+            <div class="row g-4 mb-5">
+                <div class="col-md-6">
+                    <label class="form-label fw-medium text-muted">Job Role</label>
+                    <input type="text" class="form-control bg-light border-0 py-2" style="border-radius: 10px;" name="job_role" value="{{ company.job_role if company else '' }}" placeholder="e.g. Software Engineer">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label fw-medium text-muted">Package (String)</label>
+                    <input type="text" class="form-control bg-light border-0 py-2" style="border-radius: 10px;" name="package" value="{{ company.package if company else '' }}" placeholder="e.g. 10 - 15 LPA">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label fw-medium text-muted">Exact CTC (Number)</label>
+                    <input type="number" step="0.01" class="form-control bg-light border-0 py-2" style="border-radius: 10px;" name="ctc" value="{{ company.ctc if company else '' }}" placeholder="e.g. 12.5">
+                </div>
+                <div class="col-md-12">
+                    <label class="form-label fw-medium text-muted">Job Description</label>
+                    <textarea class="form-control bg-light border-0 py-2" style="border-radius: 10px;" name="job_description" rows="4">{{ company.job_description if company else '' }}</textarea>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-medium text-muted">Required Skills (Comma separated)</label>
+                    <textarea class="form-control bg-light border-0 py-2" style="border-radius: 10px;" name="required_skills" rows="2" placeholder="Java, Python, React">{{ company.required_skills if company else '' }}</textarea>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-medium text-muted">Bond Details (If any)</label>
+                    <textarea class="form-control bg-light border-0 py-2" style="border-radius: 10px;" name="bond_details" rows="2">{{ company.bond_details if company else '' }}</textarea>
+                </div>
+            </div>
+
+            <h5 class="fw-bold mb-4 border-bottom pb-3">HR Contact Info <small class="text-muted fw-normal">(Only visible to Admins/Officers)</small></h5>
+            <div class="row g-4 mb-4">
+                <div class="col-md-4">
+                    <label class="form-label fw-medium text-muted">Contact Person</label>
+                    <input type="text" class="form-control bg-light border-0 py-2" style="border-radius: 10px;" name="contact_person" value="{{ company.contact_person if company else '' }}">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-medium text-muted">Email</label>
+                    <input type="email" class="form-control bg-light border-0 py-2" style="border-radius: 10px;" name="hr_email" value="{{ company.hr_email if company else '' }}">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-medium text-muted">Phone Number</label>
+                    <input type="text" class="form-control bg-light border-0 py-2" style="border-radius: 10px;" name="hr_phone" value="{{ company.hr_phone if company else '' }}">
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-end gap-3 mt-5">
+                <a href="{{ url_for('companies.list_companies') }}" class="btn btn-light px-4" style="border-radius: 10px;">Cancel</a>
+                <button type="submit" class="btn btn-primary px-5" style="border-radius: 10px;">{{ action }} Company</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

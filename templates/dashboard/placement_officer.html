@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block title %}Placement Officer Dashboard - Placement Portal{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold mb-0">Placement Officer Dashboard</h2>
+    <div>
+        <button class="btn btn-primary" style="border-radius: 10px;">
+            <i class="bi bi-plus-lg me-2"></i>New Drive
+        </button>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-md-6 col-lg-3">
+        <div class="stat-card">
+            <div class="stat-icon icon-blue">
+                <i class="bi bi-mortarboard-fill"></i>
+            </div>
+            <div class="stat-value">{{ stats.students_registered }}</div>
+            <div class="stat-label">Students Registered</div>
+        </div>
+    </div>
+    
+    <div class="col-md-6 col-lg-3">
+        <div class="stat-card">
+            <div class="stat-icon icon-green">
+                <i class="bi bi-play-circle-fill"></i>
+            </div>
+            <div class="stat-value">{{ stats.drives_running }}</div>
+            <div class="stat-label">Ongoing Drives</div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-lg-3">
+        <div class="stat-card">
+            <div class="stat-icon icon-purple">
+                <i class="bi bi-buildings-fill"></i>
+            </div>
+            <div class="stat-value">{{ stats.companies_visiting }}</div>
+            <div class="stat-label">Companies Visiting</div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-lg-3">
+        <div class="stat-card">
+            <div class="stat-icon icon-orange">
+                <i class="bi bi-calendar-event-fill"></i>
+            </div>
+            <div class="stat-value">{{ stats.upcoming_interviews }}</div>
+            <div class="stat-label">Upcoming Interviews</div>
+        </div>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm mb-4" style="border-radius: 16px;">
+    <div class="card-body p-4">
+        <h5 class="fw-bold mb-4">Recent Placement Drives</h5>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th class="border-0 rounded-start">Company</th>
+                        <th class="border-0">Role</th>
+                        <th class="border-0">Package</th>
+                        <th class="border-0">Status</th>
+                        <th class="border-0 text-end rounded-end">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Placeholder data, will be populated from DB later -->
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="bg-light rounded p-2 me-3">
+                                    <i class="bi bi-google text-danger fs-4"></i>
+                                </div>
+                                <span class="fw-bold">Google</span>
+                            </div>
+                        </td>
+                        <td>Software Engineer</td>
+                        <td>32 LPA</td>
+                        <td><span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3 py-2">Registration Open</span></td>
+                        <td class="text-end">
+                            <button class="btn btn-sm btn-light rounded-pill"><i class="bi bi-chevron-right"></i></button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

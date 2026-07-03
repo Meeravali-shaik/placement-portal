@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+
+{% block title %}{{ action }} Student - Placement Portal{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <a href="{{ url_for('students.list_students') }}" class="btn btn-link text-muted px-0 text-decoration-none mb-2">
+            <i class="bi bi-arrow-left me-1"></i> Back to Students
+        </a>
+        <h2 class="fw-bold mb-0">{{ action }} Student</h2>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm" style="border-radius: 16px;">
+    <div class="card-body p-4 p-md-5">
+        <form action="{{ request.path }}" method="POST">
+            <h5 class="fw-bold mb-4 border-bottom pb-3">Account Details</h5>
+            <div class="row g-4 mb-5">
+                <div class="col-md-6">
+                    <label class="form-label fw-medium text-muted">Full Name <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control bg-light border-0 py-2" style="border-radius: 10px;" name="full_name" value="{{ student.full_name if student else '' }}" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-medium text-muted">Email <span class="text-danger">*</span></label>
+                    <input type="email" class="form-control bg-light border-0 py-2" style="border-radius: 10px;" name="email" value="{{ student.email if student else '' }}" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-medium text-muted">Password <span class="text-danger">*</span></label>
+                    <input type="password" class="form-control bg-light border-0 py-2" style="border-radius: 10px;" name="password" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-medium text-muted">Placement Status</label>
+                    <select class="form-select bg-light border-0 py-2" style="border-radius: 10px;" name="placement_status">
+                        <option value="Unplaced" selected>Unplaced</option>
+                        <option value="Placed">Placed</option>
+                    </select>
+                </div>
+            </div>
+
+            <h5 class="fw-bold mb-4 border-bottom pb-3">Academic Information</h5>
+            <div class="row g-4 mb-5">
+                <div class="col-md-6">
+                    <label class="form-label fw-medium text-muted">Roll Number</label>
+                    <input type="text" class="form-control bg-light border-0 py-2" style="border-radius: 10px;" name="roll_number" value="{{ student.roll_number if student else '' }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-medium text-muted">Registration Number</label>
+                    <input type="text" class="form-control bg-light border-0 py-2" style="border-radius: 10px;" name="registration_number" value="{{ student.registration_number if student else '' }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-medium text-muted">Branch</label>
+                    <select class="form-select bg-light border-0 py-2" style="border-radius: 10px;" name="branch">
+                        <option value="">Select Branch</option>
+                        <option value="Computer Science">Computer Science</option>
+                        <option value="Information Technology">Information Technology</option>
+                        <option value="Electronics">Electronics</option>
+                        <option value="Mechanical">Mechanical</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-medium text-muted">Department</label>
+                    <input type="text" class="form-control bg-light border-0 py-2" style="border-radius: 10px;" name="department" value="{{ student.department if student else '' }}" placeholder="e.g. CSE">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-medium text-muted">Graduation Year</label>
+                    <input type="number" class="form-control bg-light border-0 py-2" style="border-radius: 10px;" name="graduation_year" value="{{ student.graduation_year if student else '' }}">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-medium text-muted">CGPA</label>
+                    <input type="number" step="0.01" class="form-control bg-light border-0 py-2" style="border-radius: 10px;" name="cgpa" value="{{ student.cgpa if student else '' }}">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-medium text-muted">Active Backlogs</label>
+                    <input type="number" class="form-control bg-light border-0 py-2" style="border-radius: 10px;" name="active_backlogs" value="{{ student.active_backlogs if student else '0' }}">
+                </div>
+            </div>
+
+            <h5 class="fw-bold mb-4 border-bottom pb-3">Personal & Contact Details</h5>
+            <div class="row g-4 mb-4">
+                <div class="col-md-4">
+                    <label class="form-label fw-medium text-muted">Phone Number</label>
+                    <input type="text" class="form-control bg-light border-0 py-2" style="border-radius: 10px;" name="phone_number" value="{{ student.phone_number if student else '' }}">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-medium text-muted">Gender</label>
+                    <select class="form-select bg-light border-0 py-2" style="border-radius: 10px;" name="gender">
+                        <option value="">Select Gender</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-medium text-muted">Date of Birth</label>
+                    <input type="date" class="form-control bg-light border-0 py-2" style="border-radius: 10px;" name="date_of_birth" value="{{ student.date_of_birth if student else '' }}">
+                </div>
+                <div class="col-md-12">
+                    <label class="form-label fw-medium text-muted">Address</label>
+                    <textarea class="form-control bg-light border-0 py-2" style="border-radius: 10px;" name="address" rows="2">{{ student.address if student else '' }}</textarea>
+                </div>
+            </div>
+
+            <h5 class="fw-bold mb-4 border-bottom pb-3">Links & Skills</h5>
+            <div class="row g-4 mb-4">
+                <div class="col-md-6">
+                    <label class="form-label fw-medium text-muted">LinkedIn URL</label>
+                    <input type="url" class="form-control bg-light border-0 py-2" style="border-radius: 10px;" name="linkedin_url" value="{{ student.linkedin_url if student else '' }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-medium text-muted">GitHub URL</label>
+                    <input type="url" class="form-control bg-light border-0 py-2" style="border-radius: 10px;" name="github_url" value="{{ student.github_url if student else '' }}">
+                </div>
+                <div class="col-md-12">
+                    <label class="form-label fw-medium text-muted">Skills</label>
+                    <textarea class="form-control bg-light border-0 py-2" style="border-radius: 10px;" name="skills" rows="3" placeholder="Python, Java, SQL">{{ student.skills if student else '' }}</textarea>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-end gap-3 mt-5">
+                <a href="{{ url_for('students.list_students') }}" class="btn btn-light px-4" style="border-radius: 10px;">Cancel</a>
+                <button type="submit" class="btn btn-primary px-5" style="border-radius: 10px;">{{ action }} Student</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

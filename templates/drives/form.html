@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+
+{% block title %}{{ action }} Drive - Placement Portal{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <a href="{{ url_for('drives.list_drives') }}" class="btn btn-link text-muted px-0 text-decoration-none mb-2">
+            <i class="bi bi-arrow-left me-1"></i> Back to Drives
+        </a>
+        <h2 class="fw-bold mb-0">{{ action }} Placement Drive</h2>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm" style="border-radius: 16px;">
+    <div class="card-body p-4 p-md-5">
+        <form action="{{ request.path }}" method="POST">
+            
+            <h5 class="fw-bold mb-4 border-bottom pb-3">Drive Information</h5>
+            <div class="row g-4 mb-5">
+                <div class="col-md-6">
+                    <label class="form-label fw-medium text-muted">Drive Name <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control bg-light border-0 py-2" style="border-radius: 10px;" name="drive_name" value="{{ drive.drive_name if drive else '' }}" required placeholder="e.g. Google Campus Hiring 2024">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-medium text-muted">Company <span class="text-danger">*</span></label>
+                    <select class="form-select bg-light border-0 py-2" style="border-radius: 10px;" name="company_id" required>
+                        <option value="">Select Company</option>
+                        {% for comp in companies %}
+                            <option value="{{ comp.id }}" {% if drive and drive.company_id == comp.id %}selected{% endif %}>{{ comp.company_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-medium text-muted">Drive Status</label>
+                    <select class="form-select bg-light border-0 py-2" style="border-radius: 10px;" name="drive_status">
+                        <option value="Upcoming" {% if drive and drive.drive_status == 'Upcoming' %}selected{% endif %}>Upcoming</option>
+                        <option value="Registration Open" {% if drive and drive.drive_status == 'Registration Open' %}selected{% endif %}>Registration Open</option>
+                        <option value="Registration Closed" {% if drive and drive.drive_status == 'Registration Closed' %}selected{% endif %}>Registration Closed</option>
+                        <option value="Ongoing" {% if drive and drive.drive_status == 'Ongoing' %}selected{% endif %}>Ongoing</option>
+                        <option value="Completed" {% if drive and drive.drive_status == 'Completed' %}selected{% endif %}>Completed</option>
+                        <option value="Cancelled" {% if drive and drive.drive_status == 'Cancelled' %}selected{% endif %}>Cancelled</option>
+                    </select>
+                </div>
+                <div class="col-md-8">
+                    <label class="form-label fw-medium text-muted">Venue</label>
+                    <input type="text" class="form-control bg-light border-0 py-2" style="border-radius: 10px;" name="venue" value="{{ drive.venue if drive else '' }}" placeholder="e.g. Main Auditorium">
+                </div>
+            </div>
+
+            <h5 class="fw-bold mb-4 border-bottom pb-3">Schedule Info</h5>
+            <div class="row g-4 mb-5">
+                <div class="col-md-4">
+                    <label class="form-label fw-medium text-muted">Drive Date</label>
+                    <input type="date" class="form-control bg-light border-0 py-2" style="border-radius: 10px;" name="drive_date" value="{{ drive.drive_date if drive else '' }}">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-medium text-muted">Registration Start (Time)</label>
+                    <input type="datetime-local" class="form-control bg-light border-0 py-2" style="border-radius: 10px;" name="registration_start" value="{{ drive.registration_start if drive else '' }}">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-medium text-muted">Registration End (Time)</label>
+                    <input type="datetime-local" class="form-control bg-light border-0 py-2" style="border-radius: 10px;" name="registration_end" value="{{ drive.registration_end if drive else '' }}">
+                </div>
+                
+                <div class="col-md-4">
+                    <label class="form-label fw-medium text-muted">Aptitude Test Date</label>
+                    <input type="datetime-local" class="form-control bg-light border-0 py-2" style="border-radius: 10px;" name="aptitude_test_date" value="{{ drive.aptitude_test_date if drive else '' }}">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-medium text-muted">Technical Interview</label>
+                    <input type="datetime-local" class="form-control bg-light border-0 py-2" style="border-radius: 10px;" name="technical_interview_date" value="{{ drive.technical_interview_date if drive else '' }}">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-medium text-muted">HR Interview</label>
+                    <input type="datetime-local" class="form-control bg-light border-0 py-2" style="border-radius: 10px;" name="hr_interview_date" value="{{ drive.hr_interview_date if drive else '' }}">
+                </div>
+            </div>
+
+            <h5 class="fw-bold mb-4 border-bottom pb-3">Eligibility Engine Criteria</h5>
+            <div class="row g-4 mb-4">
+                <div class="col-md-4">
+                    <label class="form-label fw-medium text-muted">Minimum CGPA</label>
+                    <input type="number" step="0.01" class="form-control bg-light border-0 py-2" style="border-radius: 10px;" name="min_cgpa" value="{{ drive.min_cgpa if drive else '' }}" placeholder="e.g. 7.5">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-medium text-muted">Maximum Backlogs</label>
+                    <input type="number" class="form-control bg-light border-0 py-2" style="border-radius: 10px;" name="max_backlogs" value="{{ drive.max_backlogs if drive else '' }}" placeholder="e.g. 0">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-medium text-muted">Target Graduation Year</label>
+                    <input type="number" class="form-control bg-light border-0 py-2" style="border-radius: 10px;" name="graduation_year" value="{{ drive.graduation_year if drive else '' }}" placeholder="e.g. 2025">
+                </div>
+                
+                <div class="col-md-12">
+                    <label class="form-label fw-medium text-muted">Allowed Branches</label>
+                    <div class="d-flex flex-wrap gap-3 p-3 bg-light rounded-3">
+                        {% set branches = ['Computer Science', 'Information Technology', 'Electronics', 'Mechanical', 'Civil', 'Electrical'] %}
+                        {% for branch in branches %}
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="allowed_branches" value="{{ branch }}" id="branch_{{ loop.index }}" 
+                                {% if drive and drive.allowed_branches and branch in drive.allowed_branches %}checked{% endif %}>
+                            <label class="form-check-label" for="branch_{{ loop.index }}">{{ branch }}</label>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                
+                <div class="col-md-12">
+                    <label class="form-label fw-medium text-muted">Additional Required Skills</label>
+                    <textarea class="form-control bg-light border-0 py-2" style="border-radius: 10px;" name="required_skills" rows="2" placeholder="Java, Data Structures">{{ drive.required_skills if drive else '' }}</textarea>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-end gap-3 mt-5">
+                <a href="{{ url_for('drives.list_drives') }}" class="btn btn-light px-4" style="border-radius: 10px;">Cancel</a>
+                <button type="submit" class="btn btn-primary px-5" style="border-radius: 10px;">{{ action }} Drive</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,191 @@
+{% extends "base.html" %}
+
+{% block title %}Super Admin Dashboard - Placement Portal{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold mb-0">Super Admin Overview</h2>
+    <div>
+        <a href="{{ url_for('auth.create_user_account') }}" class="btn btn-outline-primary me-2" style="border-radius: 10px;">
+            <i class="bi bi-person-plus me-2"></i>Create User
+        </a>
+        <button class="btn btn-primary" style="border-radius: 10px;">
+            <i class="bi bi-download me-2"></i>Export Report
+        </button>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <!-- Stat Cards -->
+    <div class="col-md-6 col-lg-3">
+        <div class="stat-card">
+            <div class="stat-icon icon-blue">
+                <i class="bi bi-people-fill"></i>
+            </div>
+            <div class="stat-value">{{ stats.total_students }}</div>
+            <div class="stat-label">Total Students</div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-lg-3">
+        <div class="stat-card">
+            <div class="stat-icon icon-purple">
+                <i class="bi bi-building-fill"></i>
+            </div>
+            <div class="stat-value">{{ stats.total_companies }}</div>
+            <div class="stat-label">Companies Onboarded</div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-lg-3">
+        <div class="stat-card">
+            <div class="stat-icon icon-orange">
+                <i class="bi bi-calendar-check-fill"></i>
+            </div>
+            <div class="stat-value">{{ stats.total_drives }}</div>
+            <div class="stat-label">Placement Drives</div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-lg-3">
+        <div class="stat-card">
+            <div class="stat-icon icon-green">
+                <i class="bi bi-briefcase-fill"></i>
+            </div>
+            <div class="stat-value">{{ stats.total_offers }}</div>
+            <div class="stat-label">Total Offers Made</div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm" style="border-radius: 16px; height: 100%;">
+            <div class="card-body p-4">
+                <h5 class="fw-bold mb-4">Student Registrations</h5>
+                <div class="chart-panel">
+                    <canvas id="registrationChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm" style="border-radius: 16px; height: 100%;">
+            <div class="card-body p-4">
+                <h5 class="fw-bold mb-4">Branch Distribution</h5>
+                <div class="chart-panel chart-panel-sm">
+                    <canvas id="branchChart"></canvas>
+                </div>
+                <div class="mt-4 small text-muted">
+                    {% for branch in stats.branch_labels %}
+                        <div class="d-flex justify-content-between py-1 border-bottom">
+                            <span>{{ branch }}</span>
+                            <span class="fw-semibold">{{ stats.branch_total_values[loop.index0] }}</span>
+                        </div>
+                    {% else %}
+                        <p class="mb-0">No student records found yet.</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mt-1">
+    <div class="col-lg-12">
+        <div class="card border-0 shadow-sm" style="border-radius: 16px;">
+            <div class="card-body p-4">
+                <h5 class="fw-bold mb-4">Highlights</h5>
+
+                <div class="mb-4">
+                    <p class="text-muted mb-1 fs-6">Placement Percentage</p>
+                    <div class="d-flex align-items-center">
+                        <h3 class="fw-bold mb-0 me-3 text-success">{{ stats.placement_percentage }}%</h3>
+                    </div>
+                    <div class="progress mt-2" style="height: 8px; border-radius: 4px;">
+                        <div class="progress-bar bg-success" role="progressbar"
+                            style="width: {{ stats.placement_percentage }}%;"
+                            aria-valuenow="{{ stats.placement_percentage }}" aria-valuemin="0" aria-valuemax="100">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <p class="text-muted mb-1 fs-6">Highest Package</p>
+                    <h3 class="fw-bold mb-0 text-primary">{{ stats.highest_package }}</h3>
+                </div>
+
+                <div>
+                    <p class="text-muted mb-1 fs-6">Average Package</p>
+                    <h3 class="fw-bold mb-0 text-info">{{ stats.average_package }}</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const registrationLabels = {{ stats.registration_labels | tojson }};
+    const registrationValues = {{ stats.registration_values | tojson }};
+    const branchLabels = {{ stats.branch_labels | tojson }};
+    const branchValues = {{ stats.branch_total_values | tojson }};
+
+    const registrationCtx = document.getElementById('registrationChart');
+    if (registrationCtx) {
+        new Chart(registrationCtx, {
+            type: 'line',
+            data: {
+                labels: registrationLabels,
+                datasets: [{
+                    label: 'New Students',
+                    data: registrationValues,
+                    borderColor: '#10b981',
+                    backgroundColor: 'rgba(16, 185, 129, 0.18)',
+                    fill: true,
+                    tension: 0.35,
+                    pointRadius: 4,
+                    pointHoverRadius: 6,
+                    pointBackgroundColor: '#ffffff',
+                    pointBorderColor: '#10b981',
+                    pointBorderWidth: 2,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.06)' } },
+                    x: { grid: { display: false } }
+                }
+            }
+        });
+    }
+
+    const branchCtx = document.getElementById('branchChart');
+    if (branchCtx) {
+        new Chart(branchCtx, {
+            type: 'doughnut',
+            data: {
+                labels: branchLabels,
+                datasets: [{
+                    data: branchValues,
+                    backgroundColor: ['#10b981', '#3b82f6', '#8b5cf6', '#f59e0b', '#ef4444', '#14b8a6'],
+                    borderWidth: 0,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '68%',
+                plugins: { legend: { position: 'bottom' } }
+            }
+        });
+    }
+});
+</script>
+{% endblock %}
